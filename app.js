@@ -34,7 +34,7 @@ const cartRoutes = require('./routes/Cart');
 app.use(express.json());
 app.use(express.static('./public'));
 // extra packages
-app.use(morgan());
+// app.use(morgan());
 app.use(cookieParser(process.env.JWT_SECRET))
 app.use(function (req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', '*');
