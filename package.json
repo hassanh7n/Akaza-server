@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "build": "CI=false react-scripts build"
   },
   "author": "",
   "license": "ISC",
@@ -36,6 +37,6 @@
     "nodemon": "^2.0.9"
   },
   "engines": {
-    "node": "14.x"
+    "node": "16.x"
   }
 }
