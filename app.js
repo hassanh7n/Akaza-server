@@ -47,19 +47,17 @@ app.use(helmet());
 
 app.use(xss());
 app.use(cors());
-app.use(fileUpload({ useTempFiles: true }));
 
 // routes
-
 
 
 app.get('/', (req, res) => {
   res.status(200).send("AKAZA-API (Alhamdulillah done)")
 })
-app.get('/api/v1', (req, res) => {
-  console.log(req.signedCookies)
-  res.status(200).send("cookies Routes")
-})
+// app.get('/api/v1', (req, res) => {
+//   console.log(req.signedCookies)
+//   res.status(200).send("cookies Routes")
+// })
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/user',authenticateUser ,userRoutes);
 app.use('/api/v1/product',authenticateUser,productRoutes);
@@ -67,9 +65,10 @@ app.use('/api/v1/products', productsRoutes);
 app.use('/api/v1/review', authenticateUser ,reviewRoutes);
 app.use('/api/v1/order', authenticateUser ,orderRoutes);
 app.use('/api/v1/cart', authenticateUser ,cartRoutes);
-
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
+
+
 
 
 

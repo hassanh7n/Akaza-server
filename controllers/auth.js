@@ -35,7 +35,7 @@ const register = async(req, res) => {
 
 const logIn = async(req, res) => {
     const {email, password} = req.body;
-
+    
     if(!email || !password){
         throw new CustomError.BadRequestError('Plaese provide email and password')
     };
@@ -59,10 +59,6 @@ const logIn = async(req, res) => {
         user : user,
         token
     })
-
-    res.status(200).json({
-        mag : "logIn user"
-    });
 };
 
 
