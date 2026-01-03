@@ -9,7 +9,6 @@ const  mongoose  = require('mongoose');
 const moment = require('moment');
 
 const createProduct = async(req, res) => {
-  console.log(req.body);
     req.body.user = req.user.userId;
     const user = await User.findOne({_id : req.user.userId})
     const isAdmin = (user.role === 'admin' ? true : false)

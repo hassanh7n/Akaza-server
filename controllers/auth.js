@@ -11,9 +11,6 @@ const {
 
 
 
-
-
-
 const register = async(req, res) => {
     const {name, email, password, hobby} = req.body
     const isEmailAlreadyExisted = await User.findOne({email : email});
@@ -30,7 +27,8 @@ const register = async(req, res) => {
       user :  user,
        token
     });
-};
+}
+
 
 
 const logIn = async(req, res) => {
@@ -39,22 +37,22 @@ const logIn = async(req, res) => {
     if(!email || !password){
         throw new CustomError.BadRequestError('Plaese provide email and password')
     };
-
+    
     const user = await User.findOne({email});
     
     if(!user){
         throw new CustomError.UnAuthorizeError("inavlid Credentials")
     };
-
+    
     const isPasswordCorrect = await user.comparePassword(password);
-
+    
     if(!isPasswordCorrect){
         throw new CustomError.UnauthenticatedError('Inavlid Credentials');
     };
-
+    
     const token = user.createJWT();
-
-
+    
+    
     res.status(StatusCodes.OK).json({
         user : user,
         token
@@ -62,12 +60,33 @@ const logIn = async(req, res) => {
 };
 
 
+// const rgister = async(req, res) => {
+    
+// };
 
 const logOut = async(req, res) => {
     res.status(StatusCodes.OK).json({
         msg : "LogOut Successfuly"
     })
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 module.exports = {

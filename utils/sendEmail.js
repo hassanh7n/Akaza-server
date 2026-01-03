@@ -1,24 +1,25 @@
-const nodemailer = require('nodemailer');
-const nodeMaileconfig = require('./nodemailerConfig');
+require("dotenv").config();  // MUST be first
+const nodemailer = require("nodemailer");
+console.log("EMAIL_FROM:", process.env.EMAIL_FROM);
+console.log("GMAIL_APP_PASSWORD:", process.env.GMAIL_APP_PASSWORD);
 
+const sendEmail = async ({ to, subject, html }) => {
+  if (!to) throw new Error("Recipient email required");
 
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_FROM,
+      pass: process.env.GMAIL_APP_PASSWORD,
+    },
+  });
 
-const sendEmail = async({to, subject, html}) => {
-    let testAccount = await nodemailer.createTestAccount();
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to,
+    subject,
+    html,
+  });
+};
 
-
-
-
-    const transporter = nodemailer.createTransport(nodeMaileconfig);
-
-
-    return transporter.sendMail({
-        from : '"SHaheen-Wheels" <foo@example.com>',
-        to,
-        subject,
-        html
-    })
-
-}
-
-module.exports = sendEmail
+module.exports = sendEmail;

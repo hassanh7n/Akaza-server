@@ -8,7 +8,8 @@ const moment = require('moment');
 const dotenv = require('dotenv')
 dotenv.config()
 const stripe = require('stripe')(process.env.SECRET_STRIPE_KEY)
-
+const sendEmail = require("../utils/sendEmail");
+const orderPlacedEmail = require("../utils/orderPlaceEmail");
 // const fakeStripeAPI = async({amount, currency}) => {
 //     const client_secret = "sk_test_51NsAtgG1KNUw5YzwYim2hEz8LRWIowEp9GMZCfO6uE9SOO5sgSsMpvVe4Yx7PwxXPilwDkOT7orZ5jt6PaWpoTK2005y4iuCNQ"
 //     return {client_secret, amount};
@@ -16,6 +17,7 @@ const stripe = require('stripe')(process.env.SECRET_STRIPE_KEY)
 
 
 const createOrder = async(req, res) => {
+    console.log(req.body.email)
     const { items : cartItems, tax, shippingFee } = req.body;
 
     // if (!cartItems || cartItems.length < 1) {
@@ -79,6 +81,12 @@ const createOrder = async(req, res) => {
         shippingFee,
         clientSecret: paymentIntent.client_secret,
         user: req.user.userId,
+      });
+
+      await sendEmail({
+        to: req.body.email,
+        subject: "Test Email ✅",
+        html: orderPlacedEmail(req.body.name, order),
       });
     
       res
