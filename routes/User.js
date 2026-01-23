@@ -7,7 +7,6 @@ const {
     updateUser,
     updatePassword,
     showCurrentUser,
-    resetPassword
 } = require('../controllers/User');
 
 
@@ -16,6 +15,5 @@ router.route('/showMe').get(showCurrentUser);
 router.route('/:id').get(getSingleUser);
 router.route('/updateUser').patch(updateUser);
 router.route('/updateUserPassword').patch( updatePassword);
-
 
 module.exports = router;

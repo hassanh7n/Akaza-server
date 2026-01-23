@@ -2,6 +2,7 @@ const User = require('../model/User');
 const {StatusCodes} = require('http-status-codes');
 const CustomError = require('../errors');
 const chechPermissions = require('../utils/checkPermissions');
+const crypto = require("crypto");
 const {
     createTokenUser,
     attachCookiesToResponse,
@@ -96,30 +97,54 @@ const updatePassword = async(req, res) => {
 };
 
 
-const resetPassword = async(req, res) => {
-    const {email, hobby, newPassword} = req.body;
 
-    const user = await User.findOne({email : email});
+const resetPassword = async (req, res) => {
+    const { token } = req.params;
+    const { newPassword } = req.body;
 
-    if(!user){
-        throw new CustomError.UnauthenticatedError("User does not exist")
-    };
+    if (!newPassword) {
+        throw new CustomError.BadRequestError("Please provide new password");
+    }
 
-    if(user.hobby !== hobby){
-        throw new CustomError.UnauthenticatedError("User does not exist")
-    };
+    const hashedToken = crypto
+        .createHash("sha256")
+        .update(token)
+        .digest("hex");
+
+    const user = await User.findOne({
+        passwordResetToken: hashedToken,
+        passwordResetExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+        throw new CustomError.BadRequestError("Token is invalid or expired");
+    }
+    
 
     user.password = newPassword;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
 
-    await user.save();
+    await user.save(); // password will auto-hash
 
-    const token = user.createJWT()
+    const jwtToken = user.createJWT();
 
     res.status(StatusCodes.OK).json({
-        user, token
-    })
+        message: "Password reset successful",
+        token: jwtToken,
+        user: {
+            name: user.name,
+            email: user.email,
+            role: user.role,
+        },
+    });
+};
 
-}
+
+
+// FORGOT PASSWORD
+
+
 
 
 module.exports = {
@@ -128,5 +153,5 @@ module.exports = {
     updateUser,
     updatePassword,
     showCurrentUser,
-    resetPassword,
-}
+    resetPassword     // ✅ include resetPassword
+};

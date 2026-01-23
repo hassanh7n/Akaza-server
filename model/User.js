@@ -31,7 +31,14 @@ const UserModel = new mongoose.Schema({
         type : String,
         enum : ["admin", "user"],
         default : "user"
-    }
+    },
+    passwordResetToken: {
+    type: String,
+    },
+    passwordResetExpires: {
+    type: Date,
+   },
+
 })
 
 
@@ -59,5 +66,21 @@ UserModel.methods.comparePassword = async function(canditatePassword){
     const isMatch = await bcryptjs.compare(canditatePassword, this.password);
     return isMatch;
 }
+
+const crypto = require("crypto");
+
+UserModel.methods.createPasswordResetToken = function () {
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    this.passwordResetToken = crypto
+        .createHash("sha256")
+        .update(resetToken)
+        .digest("hex");
+
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+    return resetToken;
+};
+
 
 module.exports = mongoose.model('User', UserModel);
