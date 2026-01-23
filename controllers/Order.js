@@ -147,10 +147,19 @@ const getAllOrders = async (req, res) => {
     checkPermissions(req.user, order.user);
     res.status(StatusCodes.OK).json({ order });
   };
-  const getCurrentUserOrders = async (req, res) => {
-    const orders = await Order.find({ user: req.user.userId });
-    res.status(StatusCodes.OK).json({ orders, count: orders.length });
-  };
+
+  
+const getCurrentUserOrders = async (req, res) => {
+  const orders = await Order.find({ user: req.user.userId })
+    .sort({ createdAt: -1 }); // newest first
+
+  res.status(StatusCodes.OK).json({
+    orders,
+    count: orders.length,
+  });
+};
+
+
 
 
  const updateOrder = async (req, res) => {
